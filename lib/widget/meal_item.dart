@@ -5,9 +5,16 @@ import '../screen/meal_detail.dart';
 
 class MealItem extends StatelessWidget {
   final Meal meal;
-  MealItem(this.meal);
+  final Function deleteMeal;
+  MealItem(this.meal, this.deleteMeal);
   void selectMeal(ctx) {
-    Navigator.of(ctx).pushNamed(MealDetailScreen.routeName, arguments: meal.id);
+    Navigator.of(ctx)
+        .pushNamed(MealDetailScreen.routeName, arguments: meal.id)
+        .then((res) {
+      if (res != null) {
+        deleteMeal(res);
+      }
+    });
   }
 
   String get complexityText {
