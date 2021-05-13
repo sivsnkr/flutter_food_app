@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 
-import '../data/dummy_data.dart';
+// import '../data/dummy_data.dart';
 import '../widget/meal_item.dart';
 import '../models/meal.dart';
 
 class CategoryMealScreen extends StatefulWidget {
   static const routeName = '/category-meals';
-
+  final List<Meal> availableMeals;
+  CategoryMealScreen(this.availableMeals);
   @override
   _CategoryMealScreenState createState() => _CategoryMealScreenState();
 }
@@ -24,8 +25,9 @@ class _CategoryMealScreenState extends State<CategoryMealScreen> {
       title = routeArgs['title'];
       final catId = routeArgs['id'];
 
-      filteredMeals =
-          DUMMY_MEALS.where((meal) => meal.categories.contains(catId)).toList();
+      filteredMeals = widget.availableMeals
+          .where((meal) => meal.categories.contains(catId))
+          .toList();
       _loadedInitData = true;
     }
     super.didChangeDependencies();
@@ -46,12 +48,22 @@ class _CategoryMealScreenState extends State<CategoryMealScreen> {
         title: Text(title),
       ),
       body: Container(
-        child: ListView.builder(
-          itemBuilder: (ctx, index) {
-            return MealItem(filteredMeals[index], _deleteMeal);
-          },
-          itemCount: filteredMeals.length,
-        ),
+        child: filteredMeals.length == 0
+            ? Container(
+                margin: EdgeInsets.all(20),
+                child: Center(
+                  child: Text(
+                    "We are cooking something for here.",
+                    style: Theme.of(context).textTheme.headline6,
+                  ),
+                ),
+              )
+            : ListView.builder(
+                itemBuilder: (ctx, index) {
+                  return MealItem(filteredMeals[index], _deleteMeal);
+                },
+                itemCount: filteredMeals.length,
+              ),
       ),
     );
   }
