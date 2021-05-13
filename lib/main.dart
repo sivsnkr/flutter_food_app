@@ -35,8 +35,26 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  void _toggleFavouriteMeals(String mealId) {
+    final mealIndex = _favouriteMeals.indexWhere((meal) => meal.id == mealId);
+    if (mealIndex < 0) {
+      setState(() {
+        _favouriteMeals
+            .add(DUMMY_MEALS.firstWhere((meal) => meal.id == mealId));
+      });
+    } else {
+      setState(() {
+        _favouriteMeals.removeAt(mealIndex);
+      });
+    }
+  }
+
+  bool _isFavouriteMeal(String mealId) {
+    return _favouriteMeals.indexWhere((meal) => meal.id == mealId) >= 0;
+  }
+
   List<Meal> _availableMeals = DUMMY_MEALS;
-  List<Meal> _favouriteMeals;
+  List<Meal> _favouriteMeals = [];
 
   @override
   Widget build(BuildContext context) {
@@ -64,10 +82,11 @@ class _MyAppState extends State<MyApp> {
       ),
       // home: MyHomePage(),
       routes: {
-        '/': (ctx) => TabsScreen(),
+        '/': (ctx) => TabsScreen(_favouriteMeals, _isFavouriteMeal),
         CategoryMealScreen.routeName: (ctx) =>
             CategoryMealScreen(_availableMeals),
-        MealDetailScreen.routeName: (ctx) => MealDetailScreen(),
+        MealDetailScreen.routeName: (ctx) =>
+            MealDetailScreen(_toggleFavouriteMeals, _isFavouriteMeal),
         FilterScreen.routeName: (ctx) => FilterScreen(_updateFilter, _filters),
       },
     );
@@ -82,6 +101,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    return TabsScreen();
+    return MyHomePage();
   }
 }
